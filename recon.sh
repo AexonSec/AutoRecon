@@ -25,7 +25,7 @@ displayLogo() {
  ██╔══██║██║   ██║   ██║   ██║   ██║    ██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║
  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝    ██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║
  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝     ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝
- "
+ ദ്ദി ˉ͈̀꒳ˉ͈́ )✧"
 }
 
 checkArgs() {
@@ -34,6 +34,63 @@ checkArgs() {
         exit 1
     fi
 }
+
+# Tambahkan fungsi ini sebelum fungsi utama lainnya
+checkAndInstallTools() {
+    echo -e "${GREEN}--==[ Checking and Installing Tools ]==--${RESET} (^..^)ﾉ"
+
+    # Tools yang akan dicek
+    tools=("amass" "subfinder" "subjack" "massdns" "masscan" "nmap" "xsltproc" "aquatone" "dirsearch")
+
+    # Loop untuk memeriksa keberadaan tools
+    for tool in "${tools[@]}"; do
+        if ! command -v $tool &> /dev/null; then
+            echo -e "${YELLOW}[!] $tool not found. Installing...${RESET}"
+            
+            case $tool in
+                amass)
+                    sudo apt-get install -y amass
+                    ;;
+                subfinder)
+                    go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+                    cd ~/go/bin && chmod +x subfinder
+                    sudo mv subfinder /usr/local/bin
+                    ;;
+                subjack)
+                    go install -v github.com/haccer/subjack@latest
+                    cd ~/go/bin && chmod +x subjack
+                    sudo mv subjack /usr/local/bin
+                    ;;
+                massdns)
+                    sudo apt-get install -y massdns
+                    ;;
+                masscan)
+                    sudo apt-get install -y masscan
+                    ;;
+                nmap)
+                    sudo apt-get install -y nmap
+                    ;;
+                xsltproc)
+                    sudo apt-get install -y xsltproc
+                    ;;
+                aquatone)
+                    go install -v github.com/michenriksen/aquatone@latest
+                    cd ~/go/bin && chmod +x aquatone
+                    sudo mv aquatone /usr/local/bin
+                    ;;
+                dirsearch)
+                    sudo apt-get install -y dirsearch
+                    ;;
+                *)
+                    echo -e "${RED}[-] Installer for $tool not defined. Please install it manually.${RESET} (╥﹏╥)"
+                    ;;
+            esac
+        else
+            echo -e "${BLUE}[+] $tool is already installed.${RESET} PIW PIW ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧"
+        fi
+    done
+}
+
 
 setupDir() {
     echo -e "${GREEN}--==[ Setting things up ]==--${RESET}"
