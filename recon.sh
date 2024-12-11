@@ -11,6 +11,7 @@ IP_PATH="$RESULTS_PATH/ip"
 PSCAN_PATH="$RESULTS_PATH/portscan"
 SSHOT_PATH="$RESULTS_PATH/screenshot"
 DIR_PATH="$RESULTS_PATH/directory"
+HTTPX_PATH="$RESULTS_PATH/httpx"
 
 RED="\033[1;31m"
 GREEN="\033[1;32m"
@@ -118,10 +119,21 @@ enumSubs() {
     echo -e "${BLUE}[*] Check the list of subdomains at $SUB_PATH/final-subdomains.txt${RESET}"
 }
 
+httpxScan() {
+    echo -e "${GREEN}\n--==[ Running httpx for subdomain enumeration ]==--${RESET}"
+    echo -e "${RED}[+] Starting httpx scan...${RESET}"
+
+    cat $SUB_PATH/* | httpx -title -wc -sc -cl -web-server -asn -o $HTTPX_PATH/httpx-out.txt -p 8000,8080,8443,443,80,8008,3000,5000,9090,900,7070,9200,15672,9000 -threads 75 -location
+    
+    echo -e "${GREEN}[+] Scan completed! Results saved in $HTTPX_PATH/httpx-out.txt ${RESET}"
+}
+
+
+
 corsScan() {
     echo -e "${GREEN}\n--==[ Checking CORS configuration ]==--${RESET}"
     echo -e "${RED}[+] Running CORScanner...${RESET}"
-    python3 CORScanner/cors_scan.py -v -t 50 -i $SUB_PATH/final-subdomains.txt | tee $CORS_PATH/final-cors.txt
+    python3 ~/tools/CORScanner/cors_scan.py -v -t 50 -i $SUB_PATH/final-subdomains.txt | tee $CORS_PATH/final-cors.txt
     echo -e "${BLUE}[*] Check the result at $CORS_PATH/final-cors.txt${RESET}"
 }
 
@@ -163,9 +175,11 @@ bruteDir() {
 
 # Main Execution
 displayLogo
+checkAndInstallTools
 checkArgs $TARGET
 setupDir
 enumSubs
+httpxScan
 corsScan
 enumIPs
 portScan
